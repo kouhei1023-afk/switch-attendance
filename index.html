@@ -164,7 +164,19 @@ function onScanSuccess(decodedText) {
 
   beep();
 
-  callGAS("SW0001");
+let url;
+
+try {
+  url = new URL(decodedText);
+} catch (e) {
+  return;
+}
+
+const studentId = url.searchParams.get("id");
+
+if (!studentId) return;
+
+callGAS(studentId);
 }
 
 
