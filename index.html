@@ -157,6 +157,15 @@ function onScanSuccess(decodedText) {
 
   if (busy) return;
 
+  busy = true;
+
+  document.getElementById("result").innerHTML =
+    "QR読み取り成功！";
+
+  beep();
+}
+  if (busy) return;
+
   let url;
 
   try {
@@ -185,7 +194,7 @@ function onScanSuccess(decodedText) {
 scanner = new Html5Qrcode("reader");
 
 scanner.start(
-  { facingMode: "user" },
+  { facingMode: "environment" },
   {
     fps: 10,
     qrbox: {
