@@ -91,7 +91,6 @@ function beep() {
   }, 120);
 }
 
-// GASを呼び出す
 function callGAS(studentId) {
 
   const callbackName =
@@ -118,7 +117,7 @@ function callGAS(studentId) {
 
       busy = false;
 
-}, 2000);
+    }, 2000);
   };
 
   const script = document.createElement("script");
@@ -146,21 +145,7 @@ function callGAS(studentId) {
   document.body.appendChild(script);
 
   setTimeout(() => {
-
-    if (window[callbackName]) {
-      delete window[callbackName];
-
-      document.getElementById("result").innerHTML =
-        "通信エラー";
-
-      document.getElementById("result").className =
-        "error";
-
-      busy = false;
-    }
-
     script.remove();
-
   }, 10000);
 }
 
