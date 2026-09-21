@@ -1,91 +1,210 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Switch 受付</title>
+  <title>Switch 出欠管理</title>
 
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <style>
     body {
-      margin: 0;
-      background: #111;
-      color: white;
       font-family: sans-serif;
       text-align: center;
+      margin: 0;
+      padding: 20px;
+      background: #f7f7f7;
     }
 
     h1 {
-      margin: 20px 0 10px;
+      font-size: 28px;
     }
 
     #reader {
       width: 100%;
       max-width: 500px;
-      margin: auto;
+      margin: 20px auto;
+      background: white;
     }
 
-    #status {
-      font-size: 20px;
-      margin: 15px;
+    #result {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 20px auto;
+      min-height: 60px;
+    }
+
+    .ready {
+      color: #333;
+    }
+
+    .success {
+      color: #16803c;
+    }
+
+    .error {
+      color: #d00;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Switch 受付</h1>
-  <div id="status">QRコードをかざしてください</div>
+  <h1>Switch 出欠管理</h1>
+
   <div id="reader"></div>
 
-  <script>
-    let scanned = false;
+  <div id="result" class="ready">
+    QRコードを読み取ってください
+  </div>
 
-    function beep() {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = ctx.createOscillator();
-      const gain = ctx.createGain();
+<script>
 
-      oscillator.connect(gain);
-      gain.connect(ctx.destination);
+const GAS_URL =
+  "https://script.google.com/macros/s/AKfycbw8o1bt7D6fYGZ7rkW26PYBsMEf_6JTGRSNiTQEiFYvimo8ymwGu_3l-JIsBGx2Cs56sw/exec";
 
-      oscillator.frequency.value = 1000;
-      gain.gain.value = 0.15;
+let busy = false;
+let scanner;
 
-      oscillator.start();
-      oscillator.stop(ctx.currentTime + 0.12);
+// ピッ♪音
+function beep() {
+  const AudioContext =
+    window.AudioContext || window.webkitAudioContext;
+
+  if (!AudioContext) return;
+
+  const audioContext = new AudioContext();
+  const oscillator = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+
+  oscillator.frequency.value = 1000;
+  gain.gain.value = 0.15;
+
+  oscillator.connect(gain);
+  gain.connect(audioContext.destination);
+
+  oscillator.start();
+
+  setTimeout(() => {
+    oscillator.stop();
+    audioContext.close();
+  }, 120);
+}
+
+// GASを呼び出す
+function callGAS(studentId) {
+
+  const callbackName =
+    "gasCallback_" + Date.now();
+
+  window[callbackName] = function(data) {
+
+    delete window[callbackName];
+
+    document.getElementById("result").innerHTML =
+      data.result;
+
+    document.getElementById("result").className =
+      "success";
+
+    beep();
+
+    // 2秒後に再び受付状態
+    setTimeout(() => {
+      document.getElementById("result").innerHTML =
+        "QRコードを読み取ってください";
+
+      document.getElementById("result").className =
+        "ready";
+
+      busy = false;
+
+    }, 2000);
+  };
+
+  const script = document.createElement("script");
+
+  script.src =
+    GAS_URL +
+    "?api=1&id=" +
+    encodeURIComponent(studentId) +
+    "&callback=" +
+    callbackName;
+
+  script.onerror = function() {
+
+    delete window[callbackName];
+
+    document.getElementById("result").innerHTML =
+      "通信エラー";
+
+    document.getElementById("result").className =
+      "error";
+
+    busy = false;
+  };
+
+  document.body.appendChild(script);
+
+  setTimeout(() => {
+    script.remove();
+  }, 10000);
+}
+
+
+// QRを読み取ったとき
+function onScanSuccess(decodedText) {
+
+  if (busy) return;
+
+  let url;
+
+  try {
+    url = new URL(decodedText);
+  } catch (e) {
+    return;
+  }
+
+  const studentId =
+    url.searchParams.get("id");
+
+  if (!studentId) return;
+
+  busy = true;
+
+  beep();
+
+  document.getElementById("result").innerHTML =
+    "読み取り中…";
+
+  callGAS(studentId);
+}
+
+
+// カメラ開始
+scanner = new Html5Qrcode("reader");
+
+scanner.start(
+  { facingMode: "environment" },
+  {
+    fps: 10,
+    qrbox: {
+      width: 250,
+      height: 250
     }
+  },
+  onScanSuccess
+).catch(function(error) {
 
-    function onScanSuccess(decodedText) {
-      if (scanned) return;
-      scanned = true;
+  document.getElementById("result").innerHTML =
+    "カメラを起動できませんでした";
 
-      beep();
-      navigator.vibrate?.(100);
+  document.getElementById("result").className =
+    "error";
 
-      document.getElementById("status").textContent = "読み取りました！";
+});
 
-      setTimeout(() => {
-        window.location.href = decodedText;
-      }, 300);
-    }
-
-    const scanner = new Html5Qrcode("reader");
-
-    scanner.start(
-      { facingMode: "user" },
-      {
-        fps: 10,
-        qrbox: { width: 250, height: 250 }
-      },
-      onScanSuccess
-    ).catch(err => {
-      document.getElementById("status").textContent =
-        "カメラを起動できません";
-      console.error(err);
-    });
-  </script>
+</script>
 
 </body>
 </html>
