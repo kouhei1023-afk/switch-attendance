@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Switch 受付</title>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 20px 0 10px;
+    }
+
+    #reader {
+      width: 100%;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    #status {
+      font-size: 20px;
+      margin: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Switch 受付</h1>
+  <div id="status">QRコードをかざしてください</div>
+  <div id="reader"></div>
+
+  <script>
+    let scanned = false;
+
+    function beep() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      oscillator.connect(gain);
+      gain.connect(ctx.destination);
+
+      oscillator.frequency.value = 1000;
+      gain.gain.value = 0.15;
+
+      oscillator.start();
+      oscillator.stop(ctx.currentTime + 0.12);
+    }
+
+    function onScanSuccess(decodedText) {
+      if (scanned) return;
+      scanned = true;
+
+      beep();
+      navigator.vibrate?.(100);
+
+      document.getElementById("status").textContent = "読み取りました！";
+
+      setTimeout(() => {
+        window.location.href = decodedText;
+      }, 300);
+    }
+
+    const scanner = new Html5Qrcode("reader");
+
+    scanner.start(
+      { facingMode: "user" },
+      {
+        fps: 10,
+        qrbox: { width: 250, height: 250 }
+      },
+      onScanSuccess
+    ).catch(err => {
+      document.getElementById("status").textContent =
+        "カメラを起動できません";
+      console.error(err);
+    });
+  </script>
+
+</body>
+</html>
