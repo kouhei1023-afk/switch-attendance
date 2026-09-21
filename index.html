@@ -164,30 +164,6 @@ function onScanSuccess(decodedText) {
 
   beep();
 }
-  if (busy) return;
-
-  let url;
-
-  try {
-    url = new URL(decodedText);
-  } catch (e) {
-    return;
-  }
-
-  const studentId =
-    url.searchParams.get("id");
-
-  if (!studentId) return;
-
-  busy = true;
-
-  beep();
-
-  document.getElementById("result").innerHTML =
-    "読み取り中…";
-
-  callGAS(studentId);
-}
 
 
 // カメラ開始
