@@ -168,25 +168,31 @@ callGAS(decodedText);
 
 
 // カメラ開始
-scanner = new Html5Qrcode("reader");
+document.getElementById("startButton").addEventListener("click", function() {
 
-scanner.start(
-  { facingMode: "environment" },
-  {
-    fps: 10,
-    qrbox: {
-      width: 250,
-      height: 250
-    }
-  },
-  onScanSuccess
-).catch(function(error) {
+  beep();
 
-  document.getElementById("result").innerHTML =
-    "カメラを起動できませんでした";
+  scanner = new Html5Qrcode("reader");
 
-  document.getElementById("result").className =
-    "error";
+  scanner.start(
+    { facingMode: "environment" },
+    {
+      fps: 10,
+      qrbox: {
+        width: 250,
+        height: 250
+      }
+    },
+    onScanSuccess
+  ).catch(function(error) {
+
+    document.getElementById("result").innerHTML =
+      "カメラを起動できませんでした";
+
+    document.getElementById("result").className =
+      "error";
+
+  });
 
 });
 
