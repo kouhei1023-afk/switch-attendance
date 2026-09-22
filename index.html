@@ -94,7 +94,7 @@ function beep() {
   oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
   oscillator.frequency.setValueAtTime(1320, audioContext.currentTime + 0.12);
 
-  gain.gain.setValueAtTime(3.0, audioContext.currentTime);
+  gain.gain.setValueAtTime(2.0, audioContext.currentTime);
   gain.gain.exponentialRampToValueAtTime(
     0.001,
     audioContext.currentTime + 0.35
