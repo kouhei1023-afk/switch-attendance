@@ -161,18 +161,6 @@ function onScanSuccess(decodedText) {
 
   beep();
 
-let url;
-
-try {
-  url = new URL(decodedText);
-} catch (e) {
-  return;
-}
-
-const studentId = url.searchParams.get("id");
-
-if (!studentId) return;
-
 callGAS("SW0001");
 }
 
