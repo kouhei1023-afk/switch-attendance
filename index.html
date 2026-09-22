@@ -74,6 +74,11 @@ function beep() {
   if (!AudioContext) return;
 
   const audioContext = new AudioContext();
+
+  if (audioContext.state === "suspended") {
+    audioContext.resume();
+  }
+
   const oscillator = audioContext.createOscillator();
   const gain = audioContext.createGain();
 
@@ -90,7 +95,6 @@ function beep() {
     audioContext.close();
   }, 120);
 }
-
 function callGAS(qrUrl) {
   const callbackName =
     "gasCallback_" + Date.now();
