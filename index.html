@@ -164,7 +164,7 @@ function onScanSuccess(decodedText) {
 const studentId = new URL(decodedText).searchParams.get("id");
 
 document.getElementById("result").innerHTML =
-  "ID：" + studentId;
+  "読み取った内容：" + decodedText;
 }
 
 
