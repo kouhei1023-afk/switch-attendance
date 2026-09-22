@@ -91,7 +91,7 @@ function beep() {
   }, 120);
 }
 
-function callGAS("SW0001") {
+function callGAS(studentId) {
   const callbackName =
     "gasCallback_" + Date.now();
 
@@ -173,7 +173,7 @@ const studentId = url.searchParams.get("id");
 
 if (!studentId) return;
 
-callGAS(studentId);
+callGAS("SW0001");
 }
 
 
