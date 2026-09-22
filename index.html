@@ -91,12 +91,11 @@ function beep() {
   }, 120);
 }
 
-function callGAS(studentId) {
+function callGAS(qrUrl) {
   const callbackName =
     "gasCallback_" + Date.now();
 
   window[callbackName] = function(data) {
-
     delete window[callbackName];
 
     document.getElementById("result").innerHTML =
@@ -123,13 +122,12 @@ function callGAS(studentId) {
 
   script.src =
     GAS_URL +
-    "?api=1&id=" +
-    encodeURIComponent(studentId) +
+    "?api=2&qr=" +
+    encodeURIComponent(qrUrl) +
     "&callback=" +
     callbackName;
 
   script.onerror = function() {
-
     delete window[callbackName];
 
     document.getElementById("result").innerHTML =
@@ -161,10 +159,7 @@ function onScanSuccess(decodedText) {
 
   beep();
 
-const studentId = new URL(decodedText).searchParams.get("id");
-
-document.getElementById("result").innerHTML =
-  "読み取った内容：" + decodedText;
+callGAS(decodedText);
 }
 
 
