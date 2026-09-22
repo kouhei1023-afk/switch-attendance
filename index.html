@@ -110,8 +110,8 @@ function callGAS(qrUrl) {
     document.getElementById("result").className =
       "success";
 
-    beep();
-
+ beep();
+    
     setTimeout(() => {
       document.getElementById("result").innerHTML =
         "QRコードを読み取ってください";
@@ -163,7 +163,7 @@ function onScanSuccess(decodedText) {
   document.getElementById("result").innerHTML =
     "読み取り中…";
 
-  beep();
+
 
 callGAS(decodedText);
 }
@@ -172,7 +172,6 @@ callGAS(decodedText);
 // カメラ開始
 document.getElementById("startButton").addEventListener("click", function() {
 
-  beep();
 
   scanner = new Html5Qrcode("reader");
 
