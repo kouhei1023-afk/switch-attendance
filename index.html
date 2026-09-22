@@ -67,13 +67,17 @@ let busy = false;
 let scanner;
 
 // ピッ♪音
+let audioContext;
+
 function beep() {
   const AudioContext =
     window.AudioContext || window.webkitAudioContext;
 
   if (!AudioContext) return;
 
-  const audioContext = new AudioContext();
+  if (!audioContext) {
+    audioContext = new AudioContext();
+  }
 
   if (audioContext.state === "suspended") {
     audioContext.resume();
@@ -92,9 +96,10 @@ function beep() {
 
   setTimeout(() => {
     oscillator.stop();
-    audioContext.close();
   }, 120);
 }
+
+  
 function callGAS(qrUrl) {
   const callbackName =
     "gasCallback_" + Date.now();
