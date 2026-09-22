@@ -163,7 +163,8 @@ function onScanSuccess(decodedText) {
 
 const studentId = new URL(decodedText).searchParams.get("id");
 
-callGAS(studentId);
+document.getElementById("result").innerHTML =
+  "ID：" + studentId;
 }
 
 
