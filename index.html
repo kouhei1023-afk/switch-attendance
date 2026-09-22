@@ -108,7 +108,6 @@ function callGAS(qrUrl) {
     document.getElementById("result").className =
       "success";
 
- beep();
     
     setTimeout(() => {
       document.getElementById("result").innerHTML =
@@ -158,6 +157,8 @@ function onScanSuccess(decodedText) {
 
   busy = true;
 
+ beep();
+  
   document.getElementById("result").innerHTML =
     "読み取り中…";
 
