@@ -52,8 +52,6 @@
 
   <h1>Switch 出欠管理</h1>
 
-<button id="startButton">カメラを起動</button>
-
 <div id="reader"></div>
 
   <div id="result" class="ready">
@@ -169,31 +167,28 @@ callGAS(decodedText);
 }
 
 
-// カメラ開始
-document.getElementById("startButton").addEventListener("click", function() {
+// カメラ自動開始
+scanner = new Html5Qrcode("reader");
 
+scanner.start(
+  { facingMode: "environment" },
+  {
+    fps: 10,
+    qrbox: {
+      width: 250,
+      height: 250
+    }
+  },
+  onScanSuccess
+).catch(function(error) {
 
-  scanner = new Html5Qrcode("reader");
+  document.getElementById("result").innerHTML =
+    "カメラを起動できませんでした";
 
-  scanner.start(
-    { facingMode: "environment" },
-    {
-      fps: 10,
-      qrbox: {
-        width: 250,
-        height: 250
-      }
-    },
-    onScanSuccess
-  ).catch(function(error) {
+  document.getElementById("result").className =
+    "error";
 
-    document.getElementById("result").innerHTML =
-      "カメラを起動できませんでした";
-
-    document.getElementById("result").className =
-      "error";
-
-  });
+});
 
 });
 
